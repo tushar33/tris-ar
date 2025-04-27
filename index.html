@@ -1,0 +1,108 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.1/dist/mindar-image-aframe.prod.js"></script>
+    <script src="https://cdn.rawgit.com/mayognaise/aframe-chromakey-material/v1.2.0/dist/aframe-chromakey-material.min.js"></script>
+  </head>
+  <body>
+    <a-scene
+      mindar-image="imageTargetSrc: assets/targets-3.mind;"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+    >
+      <a-assets>
+        <!-- <img id="playButton" src="assets/play-button.png" crossorigin="anonymous"> -->
+        <!-- <button id="playButton" src="assets/play-button.png">Start</button> -->
+
+        <!-- <video id="vid" src="assets/mov_bbb.mp4" autoplay="true" loop="true"></video>     -->
+
+        <video id="myVideo" src="assets/gandhiji.mp4"></video>
+
+      </a-assets>
+
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <!-- <a-entity mindar-image-target="targetIndex: 0">
+        <a-plane
+          id="youtube-button"
+          width="1.6"
+          height="0.9"
+          position="0 0 0"
+          material="shader: flat; src: #playButton; transparent: true"
+          event-set__click="handler: openURL; url: https://www.google.com"
+        ></a-plane>
+      </a-entity> -->
+
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-video src="#myVideo" width="16" height="16" position="0 0 0" scale="0.065 0.065 1"></a-video>        
+      </a-entity>
+
+    </a-scene>
+
+    <script>
+      // AFRAME.registerComponent('openURL', {
+      //   schema: {
+      //     url: { type: 'string' },
+      //   },
+      //   init: function () {
+      //     const el = this.el;
+      //     const url = this.data.url;
+      //     el.addEventListener('click', function () {
+      //       console.log('Button clicked!', url); // Add this for debugging
+      //       window.open(url, '_blank'); // Opens in a new tab
+      //     });
+      //   },
+      // });
+
+  //     document.addEventListener("DOMContentLoaded", function() {
+  //       console.log("DOM fully loaded and parsed");
+  //       const exampleTarget = document.querySelector('#playButton');
+  //       console.log("exampleTarget", exampleTarget);
+
+  //       exampleTarget.addEventListener('click', () => {
+  //         alert('Button clicked!');
+	// });
+  //     })
+
+
+      document.addEventListener("DOMContentLoaded", function() {
+      const video = document.querySelector('#myVideo');
+      
+      // Try to start playback immediately (might work if muted)
+      video.play().catch(e => console.log("Initial autoplay failed:", e));
+      
+      // Play video when target is found
+      const targetEntity = document.querySelector('[mindar-image-target="targetIndex: 0"]');
+      targetEntity.addEventListener("targetFound", function() {
+        // console.log("Target found, attempting to play video", targetEntity);
+        video.play().catch(e => console.log("Error playing video:", e));
+      });
+
+      // Pause video when target is lost
+      targetEntity.addEventListener("targetLost", function() {
+        console.log("Target lost, pausing video");
+        video.pause();
+      });
+ 
+      // targetEntity.addEventListener("click", function() {
+      //   console.log("Target clicked, playing video");
+      //   video.pause();
+      // });
+ 
+      document.addEventListener('click', function() {
+        if (video.paused) {
+          console.log("User clicked, playing video");
+          video.play();
+        }
+        else {
+          console.log("User clicked, pausing video");
+          video.pause();
+        }
+      });
+    });
+    </script>
+  </body>
+</html>
